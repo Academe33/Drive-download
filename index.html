@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Google Drive Download Automático</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+        color: #333333;
+    }
+
+    input[type="text"] {
+        width: calc(100% - 70px);
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        font-size: 16px;
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 3px;
+    }
+
+    button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+    }
+
+    .output-container {
+        display: flex;
+        margin-top: 20px;
+    }
+
+    #outputUrl {
+        flex: 1;
+        padding: 10px;
+        margin-right: 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        font-size: 16px;
+    }
+
+    #copyButton {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #2196F3;
+        color: white;
+        border: none;
+        border-radius: 3px;
+    }
+
+    #copyButton:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+    }
+
+    #copyButton:hover {
+        background-color: #0b7dda;
+    }
+</style>
+<script>
+function transformarParaDownload() {
+    var inputUrl = document.getElementById('inputUrl').value.trim();
+    
+    // Verifica se o link inserido é um link público do Google Drive
+    if (inputUrl.includes('drive.google.com') && inputUrl.includes('/file/d/')) {
+        var fileId = extrairFileId(inputUrl);
+        if (fileId) {
+            var downloadUrl = 'https://drive.google.com/uc?export=download&id=' + fileId;
+            document.getElementById('outputUrl').value = downloadUrl;
+            document.getElementById('copyButton').disabled = false; // Habilita o botão de cópia
+        } else {
+            alert('Link do Google Drive inválido.');
+        }
+    } else {
+        alert('Por favor, insira um link público do Google Drive válido.');
+    }
+}
+
+function extrairFileId(url) {
+    // Expressão regular para extrair o ID do arquivo do link do Google Drive
+    var regex = /\/file\/d\/([\w-]+)/;
+    var match = url.match(regex);
+    if (match) {
+        return match[1];
+    } else {
+        return null;
+    }
+}
+
+function copiarLink() {
+    var copyText = document.getElementById('outputUrl');
+    copyText.select();
+    copyText.setSelectionRange(0, 99999); // Para dispositivos móveis
+    document.execCommand('copy');
+    alert('Link copiado para a área de transferência!');
+}
+</script>
+</head>
+<body>
+    <div class="container">
+        <h1>Transformar Link Público do Google Drive em Download Automático</h1>
+        <p>Insira o link público do Google Drive:</p>
+        <input type="text" id="inputUrl" placeholder="https://drive.google.com/file/d/SEU_ID_DO_ARQUIVO/view">
+        <button onclick="transformarParaDownload()">Transformar</button>
+        <div class="output-container">
+            <input type="text" id="outputUrl" readonly>
+            <button id="copyButton" onclick="copiarLink()" disabled>Copiar</button>
+        </div>
+    </div>
+</body>
+</html>
